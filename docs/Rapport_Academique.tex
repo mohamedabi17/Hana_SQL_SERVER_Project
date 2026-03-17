@@ -1,0 +1,438 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{amsmath}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    pdftitle={Projet EVASION - Rapport académique},
+    pdfauthor={Étudiant à compléter}
+}
+
+\onehalfspacing
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Projet EVASION}
+\fancyhead[R]{Rapport académique}
+\fancyfoot[C]{\thepage}
+
+\titleformat{\chapter}[display]
+  {\bfseries\Huge}
+  {\filright\Large\chaptername\ \thechapter}
+  {1ex}
+  {\titlerule\vspace{1ex}\filleft}
+  [\vspace{1ex}\titlerule]
+
+\lstdefinelanguage{SQLCustom}{
+  morekeywords={CREATE,ALTER,DROP,TABLE,PROCEDURE,PRIMARY,KEY,FOREIGN,REFERENCES,INSERT,INTO,VALUES,SELECT,FROM,WHERE,INNER,JOIN,LEFT,RIGHT,UPDATE,DELETE,AS,BEGIN,END,USE,GO,IF,NOT,NULL,IDENTITY,CONSTRAINT,CHECK,ORDER,BY,COUNT,SUM,TOP,GROUP,DECLARE,SET,EXEC,OR,AND},
+  sensitive=false,
+  morecomment=[l]--,
+  morestring=[b]'
+}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!8}
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\scshape\LARGE Établissement à compléter \par}
+    \vspace{1.5cm}
+    {\scshape\Large Filière à compléter \par}
+    \vspace{2cm}
+    {\Huge\bfseries Application de gestion de location de véhicules \par}
+    \vspace{0.5cm}
+    {\LARGE\bfseries Projet académique : EVASION \par}
+    \vspace{2cm}
+    \begin{tabular}{>{\bfseries}p{5cm} p{8cm}}
+        Module : & Développement d'applications / SQL Server \\
+        Réalisé par : & À compléter \\
+        Encadré par : & À compléter \\
+        Date : & 16 mars 2026 \\
+    \end{tabular}
+    \vfill
+    {\large Année universitaire 2025--2026 \par}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+Le projet \textbf{EVASION} consiste à développer une application de bureau en \textbf{C\# Windows Forms} connectée à une base de données \textbf{SQL Server} pour gérer les activités d'une entreprise de location de véhicules. L'objectif est de proposer une solution claire, structurée et complète, adaptée à un cadre universitaire.
+
+Cette application permet de gérer les clients, les véhicules, les locations, les tarifs ainsi que l'authentification des utilisateurs. Elle inclut également des rapports simples pour l'analyse de l'activité.
+
+\chapter{Contexte et problématique}
+Une entreprise de location de véhicules doit suivre plusieurs informations critiques :
+\begin{itemize}[leftmargin=1.2cm]
+    \item les données des clients ;
+    \item les véhicules disponibles ;
+    \item les catégories tarifaires ;
+    \item les locations en cours ou terminées ;
+    \item les montants calculés à partir de la durée et du kilométrage ;
+    \item les accès sécurisés à l'application.
+\end{itemize}
+
+Un système manuel rend la gestion lente, augmente les erreurs et rend les rapports difficiles à produire. Le projet EVASION répond à ce besoin par une solution informatisée centralisée.
+
+\chapter{Objectifs du projet}
+\section{Objectif général}
+Concevoir une application Windows qui automatise la gestion des locations de véhicules pour la société EVASION.
+
+\section{Objectifs spécifiques}
+\begin{itemize}[leftmargin=1.2cm]
+    \item gérer les clients particuliers et organisations ;
+    \item gérer le parc automobile ;
+    \item gérer les tarifs par catégorie ;
+    \item enregistrer et modifier les locations ;
+    \item gérer le retour des véhicules ;
+    \item calculer automatiquement le montant à payer ;
+    \item produire des rapports d'exploitation ;
+    \item sécuriser l'accès à travers une authentification.
+\end{itemize}
+
+\chapter{Étude de la base de données}
+\section{Entités principales}
+Le système repose sur les entités suivantes :
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{CLIENT}
+    \item \textbf{VEHICULE}
+    \item \textbf{LOCATION}
+    \item \textbf{TARIF}
+    \item \textbf{UTILISATEUR}
+\end{itemize}
+
+\section{Description des tables}
+\subsection{CLIENT}
+\begin{longtable}{|p{4cm}|p{3cm}|p{7cm}|}
+\hline
+\textbf{Champ} & \textbf{Type} & \textbf{Description} \\\hline
+codeclient & PK & Identifiant unique du client \\\hline
+nom & Texte & Nom du client \\\hline
+prenom & Texte & Prénom du client \\\hline
+adresse & Texte & Adresse du client \\\hline
+telephone & Texte & Numéro de téléphone \\\hline
+typeclient & IND / ORG & Type de client \\\hline
+\end{longtable}
+
+\subsection{VEHICULE}
+\begin{longtable}{|p{4cm}|p{3cm}|p{7cm}|}
+\hline
+\textbf{Champ} & \textbf{Type} & \textbf{Description} \\\hline
+immatriculation & PK & Identifiant unique du véhicule \\\hline
+categorie & FK & Catégorie tarifaire \\\hline
+marque & Texte & Marque du véhicule \\\hline
+modele & Texte & Modèle du véhicule \\\hline
+kilometrage & Entier & Kilométrage actuel \\\hline
+\end{longtable}
+
+\subsection{LOCATION}
+\begin{longtable}{|p{4cm}|p{3cm}|p{7cm}|}
+\hline
+\textbf{Champ} & \textbf{Type} & \textbf{Description} \\\hline
+id & PK & Identifiant de la location \\\hline
+codeclient & FK & Référence client \\\hline
+immatriculation & FK & Référence véhicule \\\hline
+datedebut & Date & Début de location \\\hline
+datefin & Date & Fin prévue \\\hline
+dateretour & Date nullable & Date réelle du retour \\\hline
+kmparcourus & Entier nullable & Distance parcourue \\\hline
+montant & Décimal nullable & Coût total \\\hline
+\end{longtable}
+
+\subsection{TARIF}
+\begin{longtable}{|p{4cm}|p{3cm}|p{7cm}|}
+\hline
+\textbf{Champ} & \textbf{Type} & \textbf{Description} \\\hline
+categorie & PK & Catégorie du véhicule \\\hline
+prix\_jour & Décimal & Prix par jour \\\hline
+prix\_km & Décimal & Prix par kilomètre \\\hline
+\end{longtable}
+
+\subsection{UTILISATEUR}
+\begin{longtable}{|p{4cm}|p{3cm}|p{7cm}|}
+\hline
+\textbf{Champ} & \textbf{Type} & \textbf{Description} \\\hline
+id & PK & Identifiant utilisateur \\\hline
+username & Texte & Nom de connexion \\\hline
+password & Texte & Mot de passe \\\hline
+role & Texte & Rôle de l'utilisateur \\\hline
+\end{longtable}
+
+\section{Règles de gestion}
+\begin{itemize}[leftmargin=1.2cm]
+    \item Un client possède un identifiant unique.
+    \item Un véhicule appartient à une catégorie définie dans la table \texttt{TARIF}.
+    \item Une location associe un client à un véhicule.
+    \item La date de fin doit être supérieure ou égale à la date de début.
+    \item Le montant est calculé au retour du véhicule.
+\end{itemize}
+
+La formule utilisée est :
+\[
+\text{montant} = (\text{nombre\_de\_jours} \times \text{prix\_jour}) + (\text{kmparcourus} \times \text{prix\_km})
+\]
+
+\chapter{Scripts SQL Server}
+Les scripts SQL sont fournis dans le dossier \texttt{database/} :
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{01\_schema.sql}
+    \item \texttt{02\_stored\_procedures.sql}
+    \item \texttt{03\_reports.sql}
+\end{itemize}
+
+\section{Création des tables}
+Le script de schéma contient :
+\begin{itemize}[leftmargin=1.2cm]
+    \item la création de la base \texttt{EVASIONDB} ;
+    \item les tables ;
+    \item les clés primaires ;
+    \item les clés étrangères ;
+    \item les contraintes ;
+    \item les données d'exemple.
+\end{itemize}
+
+\subsection{Database Performance Optimization}
+Afin d'améliorer la réactivité de l'application, des index SQL ciblés ont été ajoutés sur les colonnes les plus utilisées dans les recherches, les filtres et les jointures :
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{CLIENT(nom, prenom)} ;
+    \item \texttt{VEHICULE(categorie)} ;
+    \item \texttt{LOCATION(datedebut, datefin)} ;
+    \item \texttt{LOCATION(immatriculation)} ;
+    \item \texttt{LOCATION(codeclient)}.
+\end{itemize}
+
+Ces index réduisent le nombre de lectures nécessaires lors de l'exécution des requêtes, ce qui diminue le temps de réponse sur les écrans de consultation, la vérification de disponibilité et les rapports.
+
+\section{Exemple de structure SQL}
+\begin{lstlisting}[language=SQLCustom,caption={Exemple de table TARIF}]
+CREATE TABLE dbo.TARIF
+(
+    categorie NVARCHAR(30) NOT NULL,
+    prix_jour DECIMAL(10, 2) NOT NULL,
+    prix_km DECIMAL(10, 2) NOT NULL,
+    CONSTRAINT PK_TARIF PRIMARY KEY (categorie),
+    CONSTRAINT CK_TARIF_PRIX_JOUR CHECK (prix_jour >= 0),
+    CONSTRAINT CK_TARIF_PRIX_KM CHECK (prix_km >= 0)
+);
+\end{lstlisting}
+
+\chapter{Procédures stockées}
+Les procédures stockées ont été créées pour centraliser les opérations CRUD et les traitements métier.
+
+\section{Procédures sur CLIENT}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{AddClient}
+    \item \texttt{UpdateClient}
+    \item \texttt{DeleteClient}
+    \item \texttt{GetClients}
+    \item \texttt{SearchClient}
+\end{itemize}
+
+\section{Procédures sur VEHICULE}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{AddVehicle}
+    \item \texttt{UpdateVehicle}
+    \item \texttt{DeleteVehicle}
+    \item \texttt{GetVehicles}
+    \item \texttt{SearchVehicle}
+\end{itemize}
+
+\section{Procédures sur LOCATION}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{AddLocation}
+    \item \texttt{UpdateLocation}
+    \item \texttt{DeleteLocation}
+    \item \texttt{GetLocations}
+    \item \texttt{SearchLocation}
+    \item \texttt{ReturnVehicle}
+\end{itemize}
+
+\section{Retour du véhicule}
+La procédure \texttt{ReturnVehicle} récupère la catégorie du véhicule, lit le tarif correspondant et calcule automatiquement le montant total. Elle met ensuite à jour la location et le kilométrage du véhicule.
+
+\chapter{Architecture de l'application C\#}
+\section{Organisation du projet}
+Le projet est structuré comme suit :
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{Models/} : classes métier ;
+    \item \texttt{DataAccess/} : connexion à SQL Server et repositories ;
+    \item \texttt{Forms/} : interfaces Windows Forms ;
+    \item \texttt{Program.cs} : point d'entrée.
+\end{itemize}
+
+\section{Connexion à la base}
+La connexion s'appuie sur \texttt{SqlConnection} à partir de la chaîne de connexion définie dans \texttt{App.config}.
+
+\begin{lstlisting}[language={[Sharp]C},caption={Connexion SQL Server}]
+public static SqlConnection GetConnection()
+{
+    string connectionString = ConfigurationManager.ConnectionStrings["EVASIONDb"]?.ConnectionString
+        ?? throw new InvalidOperationException("La chaîne de connexion EVASIONDb est introuvable.");
+
+    return new SqlConnection(connectionString);
+}
+\end{lstlisting}
+
+\section{Couche d'accès aux données}
+La couche \texttt{DataAccess} contient :
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{Database.cs}
+    \item \texttt{DbHelper.cs}
+    \item \texttt{ClientRepository.cs}
+    \item \texttt{VehicleRepository.cs}
+    \item \texttt{RentalRepository.cs}
+    \item \texttt{AuthRepository.cs}
+    \item \texttt{ReportRepository.cs}
+\end{itemize}
+
+\section{Principe CRUD}
+Chaque opération CRUD appelle une procédure stockée. Cette approche sépare proprement l'interface, la logique C\# et la logique SQL.
+
+\section{Personal Contribution}
+Une amélioration personnelle a été intégrée au projet : un tableau de bord statistique affiché dans l'interface principale.
+
+Ce tableau de bord présente en temps réel quatre indicateurs métier :
+\begin{itemize}[leftmargin=1.2cm]
+    \item le nombre total de clients ;
+    \item le nombre total de véhicules ;
+    \item le nombre de locations actives ;
+    \item le chiffre d'affaires total.
+\end{itemize}
+
+Cette contribution améliore la visibilité business de l'agence de location, en donnant une vue synthétique immédiate de l'activité sans exécuter manuellement des rapports.
+
+\subsection{Architecture du dashboard}
+L'architecture du dashboard suit une chaîne simple et maintenable :
+
+\begin{center}
+    SQL Stored Procedures $\rightarrow$ Repository Layer (C\#) $\rightarrow$ WinForms UI Dashboard
+\end{center}
+
+\begin{itemize}[leftmargin=1.2cm]
+    \item les procédures SQL calculent les agrégats (\texttt{COUNT}, \texttt{SUM}) ;
+    \item la couche \texttt{ReportRepository} récupère les valeurs via \texttt{ExecuteScalar} ;
+    \item \texttt{MainForm} affiche les métriques et rafraîchit l'affichage après les opérations CRUD.
+\end{itemize}
+
+\chapter{Interface utilisateur}
+\section{Écran de connexion}
+Le formulaire \texttt{LoginForm} permet à l'utilisateur de saisir :
+\begin{itemize}[leftmargin=1.2cm]
+    \item le nom d'utilisateur ;
+    \item le mot de passe.
+\end{itemize}
+
+\section{Tableau de bord}
+Le formulaire principal \texttt{MainForm} est organisé en onglets :
+\begin{enumerate}[leftmargin=1.2cm]
+    \item Clients
+    \item Véhicules
+    \item Locations
+    \item Rapports
+\end{enumerate}
+
+Chaque onglet comporte :
+\begin{itemize}[leftmargin=1.2cm]
+    \item un \texttt{DataGridView} ;
+    \item un champ de recherche ;
+    \item les boutons \texttt{Ajouter}, \texttt{Modifier}, \texttt{Supprimer} ;
+    \item des dialogues dédiés pour la saisie.
+\end{itemize}
+
+\section{Choix de design}
+L'interface a été pensée pour être :
+\begin{itemize}[leftmargin=1.2cm]
+    \item claire ;
+    \item lisible ;
+    \item basée sur de grandes polices ;
+    \item simple à démontrer pendant une soutenance.
+\end{itemize}
+
+\chapter{Rapports}
+Les rapports disponibles dans l'application sont les suivants :
+\begin{itemize}[leftmargin=1.2cm]
+    \item total des locations par véhicule ;
+    \item revenu par catégorie ;
+    \item véhicules les plus loués ;
+    \item locations par client.
+\end{itemize}
+
+Ils sont alimentés par des procédures stockées spécifiques et affichés dans l'onglet \texttt{Rapports}.
+
+\chapter{Scénario de démonstration}
+\begin{enumerate}[leftmargin=1.2cm]
+    \item Se connecter avec \texttt{admin / admin123}.
+    \item Ajouter ou modifier un client.
+    \item Ajouter ou modifier un véhicule.
+    \item Enregistrer une location.
+    \item Retourner un véhicule avec kilométrage.
+    \item Afficher les rapports.
+\end{enumerate}
+
+\chapter{Conclusion}
+Le projet EVASION répond au besoin de gestion d'une société de location de véhicules en proposant une solution complète articulée autour de SQL Server et Windows Forms.
+
+Cette réalisation met en pratique plusieurs notions importantes :
+\begin{itemize}[leftmargin=1.2cm]
+    \item modélisation relationnelle ;
+    \item procédures stockées ;
+    \item architecture logicielle en couches ;
+    \item développement d'interfaces graphiques ;
+    \item calcul métier et reporting.
+\end{itemize}
+
+Le projet constitue une base solide pour un rendu académique et peut être enrichi à l'avenir par le chiffrement des mots de passe, l'export PDF des rapports ou une gestion plus avancée de la disponibilité des véhicules.
+
+\appendix
+\chapter{Arborescence du projet}
+\begin{verbatim}
+Hana_SQL_SERVER_Project/
+├── database/
+│   ├── 01_schema.sql
+│   ├── 02_stored_procedures.sql
+│   └── 03_reports.sql
+├── docs/
+│   ├── Guide_Demonstration.md
+│   ├── Rapport_Academique.md
+│   └── Rapport_Academique.tex
+├── EVASION.sln
+├── EVASION.WinForms/
+│   ├── App.config
+│   ├── EVASION.WinForms.csproj
+│   ├── Program.cs
+│   ├── DataAccess/
+│   ├── Forms/
+│   └── Models/
+└── README.md
+\end{verbatim}
+
+\chapter{Comptes de test}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{admin / admin123}
+    \item \texttt{agent1 / agent123}
+\end{itemize}
+
+\end{document}
